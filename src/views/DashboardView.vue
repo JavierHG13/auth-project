@@ -1,11 +1,6 @@
 <template>
-
-
-
+  <Navbar />
   <div class="dashboard">
-
-
-  
     <h1>Bienvenido, {{ auth.user?.name }}</h1>
     <p>Has iniciado sesión correctamente</p>
   </div>

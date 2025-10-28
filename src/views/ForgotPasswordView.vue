@@ -1,34 +1,22 @@
 <template>
-  <div class="register-container">
-    <h2>Registro</h2>
-    <form @submit.prevent="handleRegister">
-      <input 
-        v-model="name" 
-        type="text" 
-        placeholder="Nombre completo" 
-        required 
-      />
-      <input 
-        v-model="email" 
-        type="email" 
-        placeholder="Correo" 
-        required 
-      />
-      <input 
-        v-model="password" 
-        type="password" 
-        placeholder="Contraseña" 
-        minlength="6"
-        required 
-      />
+  <div class="forgot-container">
+    <h2>Recuperar contraseña</h2>
+    <p class="instruction">
+      Ingresa tu correo electrónico y te enviaremos un código de recuperación.
+    </p>
+
+    <form @submit.prevent="handleForgotPassword">
+      <input v-model="email" type="email" placeholder="Correo electrónico" required />
       <button type="submit" :disabled="loading">
-        {{ loading ? 'Registrando...' : 'Crear cuenta' }}
+        {{ loading ? 'Enviando...' : 'Enviar código' }}
       </button>
     </form>
-    
+
     <p v-if="message" :class="messageType">{{ message }}</p>
-    
-    <p>¿Ya tienes cuenta? <router-link to="/login">Inicia sesión</router-link></p>
+
+    <p class="back-link">
+      <router-link to="/login">Volver al inicio de sesión</router-link>
+    </p>
   </div>
 </template>
 
@@ -37,41 +25,34 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 
-const name = ref('')
 const email = ref('')
-const password = ref('')
 const message = ref('')
 const messageType = ref('')
 const loading = ref(false)
 const router = useRouter()
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL
 
-// Configurar axios para enviar cookies
 axios.defaults.withCredentials = true
 
-const handleRegister = async () => {
+const handleForgotPassword = async () => {
   loading.value = true
   message.value = ''
-  messageType.value = ''
-  
+
   try {
-    const response = await axios.post(`${API_URL}/register`, {
-      name: name.value,
+    const response = await axios.post(`${API_URL}/forgot-password`, {
       email: email.value,
-      password: password.value
     })
-    
+
     message.value = response.data.message
     messageType.value = 'success'
-    
-    // Redirigir a la vista de verificación después de 1.5 segundos
+
+    // Redirigir a verificación después de 1.5 segundos
     setTimeout(() => {
-      router.push('/verify-email')
+      router.push('/verify-recovery-code')
     }, 1500)
-    
   } catch (error) {
-    message.value = error.response?.data?.message || 'Error al registrar usuario'
+    message.value = error.response?.data?.message || 'Error al enviar código'
     messageType.value = 'error'
   } finally {
     loading.value = false
@@ -80,7 +61,7 @@ const handleRegister = async () => {
 </script>
 
 <style scoped>
-.register-container {
+.forgot-container {
   max-width: 400px;
   margin: 4rem auto;
   padding: 2rem;
@@ -91,28 +72,37 @@ const handleRegister = async () => {
 }
 
 h2 {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.instruction {
+  color: #b0b0b0;
+  font-size: 14px;
+  margin-bottom: 2rem;
+  line-height: 1.5;
 }
 
 input {
-  display: block;
   width: 100%;
-  margin: 10px 0;
   padding: 12px;
+  margin: 10px 0;
+  border: 2px solid #333;
   border-radius: 8px;
-  border: none;
+  background: #2a2a2a;
+  color: white;
   font-size: 14px;
   box-sizing: border-box;
 }
 
 input:focus {
-  outline: 2px solid #42b883;
+  outline: none;
+  border-color: #42b883;
 }
 
 button {
   width: 100%;
   padding: 12px;
-  margin-top: 10px;
+  margin: 10px 0;
   background: #42b883;
   color: white;
   border: none;
@@ -120,7 +110,6 @@ button {
   cursor: pointer;
   font-size: 16px;
   font-weight: bold;
-  transition: background 0.3s;
 }
 
 button:hover:not(:disabled) {
@@ -144,7 +133,7 @@ button:disabled {
   font-weight: bold;
 }
 
-p {
+.back-link {
   margin-top: 20px;
 }
 

@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar">
     <div class="logo">
-      <router-link to="/">Mi Sitio</router-link>
+      <router-link to="/"></router-link>
     </div>
 
     <div class="nav-actions">
@@ -11,9 +11,7 @@
       </router-link>
 
       <!-- Mostrar cerrar sesión si SÍ está autenticado -->
-      <button v-if="isAuthenticated" @click="logout">
-        Cerrar sesión
-      </button>
+      <button v-if="isAuthenticated" @click="logout">Cerrar sesión</button>
     </div>
   </nav>
 </template>
@@ -41,7 +39,7 @@ const logout = () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #2c3e50;
+  background: #1e1e1e;
   color: white;
   padding: 1rem 2rem;
   border-radius: 8px;
@@ -52,7 +50,8 @@ const logout = () => {
   gap: 1rem;
 }
 
-button, .btn-login {
+button,
+.btn-login {
   background: #e74c3c;
   color: white;
   border: none;
@@ -62,7 +61,8 @@ button, .btn-login {
   text-decoration: none;
 }
 
-button:hover, .btn-login:hover {
+button:hover,
+.btn-login:hover {
   background: #c0392b;
 }
 </style>

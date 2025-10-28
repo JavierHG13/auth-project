@@ -3,7 +3,9 @@ import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import DashboardView from '../views/DashboardView.vue'
 import VerifyEmailView from '../views/VerifyEmailView.vue'
-import RecuperacionView from '../views/RecuperacionView.vue'
+import ForgotPasswordView from '../views/ForgotPasswordView.vue'           
+import VerifyRecoveryCodeView from '../views/VerifyRecoveryCodeView.vue'
+import ResetPasswordView from '../views/ResetPasswordView.vue'  
 import { useAuthStore } from '../stores/authStore'
 
 const router = createRouter({
@@ -29,9 +31,19 @@ const router = createRouter({
       component: VerifyEmailView
     },
     {
-      path: '/recuperacion',
-      name: 'recuperacion',
-      component: RecuperacionView
+      path: '/forgot-password',
+      name: 'ForgotPassword',
+      component: ForgotPasswordView
+    },
+    {
+      path: '/verify-recovery-code',
+      name: 'VerifyRecoveryCode',
+      component: VerifyRecoveryCodeView
+    },
+    {
+      path: '/reset-password',
+      name: 'ResetPassword',
+      component: ResetPasswordView
     },
     {
       path: '/dashboard',

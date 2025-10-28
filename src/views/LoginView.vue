@@ -3,18 +3,8 @@
     <h2>Iniciar sesión</h2>
 
     <form @submit.prevent="handleLogin">
-      <input 
-        v-model="email" 
-        type="email" 
-        placeholder="Correo electrónico" 
-        required 
-      />
-      <input 
-        v-model="password" 
-        type="password" 
-        placeholder="Contraseña" 
-        required 
-      />
+      <input v-model="email" type="email" placeholder="Correo electrónico" required />
+      <input v-model="password" type="password" placeholder="Contraseña" required />
       <button type="submit" :disabled="loading">
         {{ loading ? 'Iniciando sesión...' : 'Entrar' }}
       </button>
@@ -22,9 +12,11 @@
 
     <p v-if="message" :class="messageType">{{ message }}</p>
 
-     <GoogleAuth />
+    <GoogleAuth />
 
-     <p><router-link to="/recuperacion">Recuperar contraseña</router-link></p>
+    <p class="forgot-link">
+      <router-link to="/forgot-password">¿Olvidaste tu contraseña?</router-link>
+    </p>
 
     <p>¿No tienes cuenta? <router-link to="/register">Crea una aquí</router-link></p>
   </div>
@@ -37,7 +29,6 @@ import { useAuthStore } from '../stores/authStore'
 import GoogleAuth from '../components/GoogleAuth.vue'
 import axios from 'axios'
 
-
 // Referencias reactivas
 const email = ref('')
 const password = ref('')
@@ -46,7 +37,8 @@ const messageType = ref('')
 const loading = ref(false)
 const router = useRouter()
 
-const API_URL = 'http://localhost:3000/api/auth'
+const API_URL = import.meta.env.VITE_API_URL;
+
 axios.defaults.withCredentials = true
 
 const handleLogin = async () => {
@@ -57,25 +49,24 @@ const handleLogin = async () => {
   // Crear una instancia del store
   const auth = useAuthStore()
 
-  
   try {
     const response = await axios.post(`${API_URL}/login`, {
       email: email.value,
-      password: password.value
+      password: password.value,
     })
 
     const { user, token, message: msg } = response.data
 
     auth.login(user, token)
 
-    
     message.value = msg
     messageType.value = 'success'
 
     console.log(response)
-    
-    setTimeout(() => {  router.push('/dashboard') }, 1500)
 
+    setTimeout(() => {
+      router.push('/dashboard')
+    }, 1500)
   } catch (error) {
     message.value = error.response?.data?.message || 'Error al iniciar sesión'
     messageType.value = 'error'
@@ -83,7 +74,6 @@ const handleLogin = async () => {
     loading.value = false
   }
 }
-
 </script>
 
 <style scoped>
