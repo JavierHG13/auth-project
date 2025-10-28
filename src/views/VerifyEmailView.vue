@@ -48,7 +48,7 @@ const loading = ref(false)
 const cooldown = ref(0)
 const router = useRouter()
 
-const API_URL = 'http://localhost:3000/api/auth'
+const API_URL = import.meta.env.VITE_API_URL;
 
 axios.defaults.withCredentials = true
 
