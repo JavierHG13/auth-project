@@ -5,11 +5,11 @@
       Hemos enviado un código de verificación a tu correo electrónico.
       <br />Ingresa el código de 6 dígitos para activar tu cuenta.
     </p>
-    
+
     <form @submit.prevent="verifyCode">
-      <input 
-        v-model="code" 
-        type="text" 
+      <input
+        v-model="code"
+        type="text"
         placeholder="Código de 6 dígitos"
         maxlength="6"
         pattern="\d{6}"
@@ -20,16 +20,12 @@
         {{ loading ? 'Verificando...' : 'Verificar' }}
       </button>
     </form>
-    
+
     <p v-if="message" :class="messageType">{{ message }}</p>
-    
+
     <div class="resend-section">
       <p>¿No recibiste el código?</p>
-      <button 
-        @click="resendCode" 
-        :disabled="cooldown > 0 || loading"
-        class="resend-btn"
-      >
+      <button @click="resendCode" :disabled="cooldown > 0 || loading" class="resend-btn">
         {{ cooldown > 0 ? `Espera ${cooldown}s` : 'Reenviar código' }}
       </button>
     </div>
@@ -39,6 +35,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '../stores/authStore'
 import axios from 'axios'
 
 const code = ref('')
@@ -47,8 +44,9 @@ const messageType = ref('')
 const loading = ref(false)
 const cooldown = ref(0)
 const router = useRouter()
+const auth = useAuthStore()
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL
 
 axios.defaults.withCredentials = true
 
@@ -58,23 +56,23 @@ const verifyCode = async () => {
     messageType.value = 'error'
     return
   }
-  
+
   loading.value = true
   message.value = ''
-  
+
   try {
     const response = await axios.post(`${API_URL}/verify-email`, {
-      code: code.value
+      code: code.value,
+      email: auth.user?.email,
     })
-    
+
     message.value = response.data.message
     messageType.value = 'success'
-    
+
     // Redirigir al login después de 2 segundos
     setTimeout(() => {
       router.push('/login')
     }, 2000)
-    
   } catch (error) {
     message.value = error.response?.data?.message || 'Error al verificar el código'
     messageType.value = 'error'
@@ -87,20 +85,19 @@ const verifyCode = async () => {
 const resendCode = async () => {
   loading.value = true
   message.value = ''
-  
+
   try {
     const response = await axios.post(`${API_URL}/resend-code`)
-    
+
     message.value = response.data.message
     messageType.value = 'success'
-    
+
     // Iniciar cooldown de 60 segundos
     cooldown.value = 60
     const interval = setInterval(() => {
       cooldown.value--
       if (cooldown.value === 0) clearInterval(interval)
     }, 1000)
-    
   } catch (error) {
     message.value = error.response?.data?.message || 'Error al reenviar código'
     messageType.value = 'error'
