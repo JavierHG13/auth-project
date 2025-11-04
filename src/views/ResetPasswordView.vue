@@ -107,7 +107,6 @@
 import { ref, reactive, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
-import { useAuthStore } from '../stores/authStore'
 import { Lock, Eye, EyeOff, CheckCircle2, AlertCircle, Shield, Loader2, Key } from 'lucide-vue-next'
 
 const newPassword = ref('')
@@ -121,7 +120,7 @@ const confirmError = ref('')
 const confirmSuccess = ref(false)
 const passwordError = ref('')
 const router = useRouter()
-const auth = useAuthStore()
+const email = ref(localStorage.getItem('recoveryEmail') || '')
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -205,7 +204,7 @@ const handleResetPassword = async () => {
   try {
     const response = await axios.post(`${API_URL}/reset-password`, {
       newPassword: newPassword.value,
-      email: auth.user?.email,
+      email: email.value,
     })
 
     message.value = response.data.message
