@@ -46,6 +46,8 @@ const handleForgotPassword = async () => {
 
     message.value = response.data.message
     messageType.value = 'success'
+    
+    localStorage.setItem('recoveryEmail', email.value)
 
     // Redirigir a verificación después de 1.5 segundos
     setTimeout(() => {

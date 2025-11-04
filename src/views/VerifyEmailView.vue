@@ -35,7 +35,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuthStore } from '../stores/authStore'
 import axios from 'axios'
 
 const code = ref('')
@@ -44,11 +43,15 @@ const messageType = ref('')
 const loading = ref(false)
 const cooldown = ref(0)
 const router = useRouter()
-const auth = useAuthStore()
-
+const pendingEmail = ref('')
 const API_URL = import.meta.env.VITE_API_URL
 
 axios.defaults.withCredentials = true
+
+onMounted(() => {
+  // Obtener el correo guardado al registrarse
+  pendingEmail.value = localStorage.getItem('pendingEmail') || ''
+})
 
 const verifyCode = async () => {
   if (code.value.length !== 6) {
@@ -62,12 +65,13 @@ const verifyCode = async () => {
 
   try {
     const response = await axios.post(`${API_URL}/verify-email`, {
-      code: code.value,
-      email: auth.user?.email,
+      email: pendingEmail.value,
+      code: verificationCode.value,
     })
-
     message.value = response.data.message
     messageType.value = 'success'
+
+    localStorage.removeItem('pendingEmail')
 
     // Redirigir al login después de 2 segundos
     setTimeout(() => {
@@ -87,7 +91,7 @@ const resendCode = async () => {
   message.value = ''
 
   try {
-    const response = await axios.post(`${API_URL}/resend-code`)
+    const response = await axios.post(`${API_URL}/resend-code`, { email: pendingEmail.value, })
 
     message.value = response.data.message
     messageType.value = 'success'

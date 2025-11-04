@@ -33,7 +33,6 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
-import { useAuthStore } from '../stores/authStore'
 
 const code = ref('')
 const message = ref('')
@@ -41,7 +40,7 @@ const messageType = ref('')
 const loading = ref(false)
 const cooldown = ref(0)
 const router = useRouter()
-const auth = useAuthStore()
+const email = ref(localStorage.getItem('recoveryEmail') || '')
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -60,7 +59,7 @@ const verifyCode = async () => {
   try {
     const response = await axios.post(`${API_URL}/verify-recovery-code`, {
       code: code.value,
-      email: auth.user?.email,
+      email: email.value,
     })
 
     message.value = response.data.message
@@ -83,10 +82,12 @@ const resendCode = async () => {
   message.value = ''
 
   try {
-    const response = await axios.post(`${API_URL}/resend-recovery-code`)
+    const response = await axios.post(`${API_URL}/resend-recovery-code`, { email: email.value })
 
     message.value = response.data.message
     messageType.value = 'success'
+    
+
 
     cooldown.value = 60
     const interval = setInterval(() => {

@@ -210,6 +210,7 @@ const handleResetPassword = async () => {
 
     message.value = response.data.message
     messageType.value = 'success'
+    localStorage.removeItem('recoveryEmail')
 
     setTimeout(() => {
       router.push('/login')
