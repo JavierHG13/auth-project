@@ -12,8 +12,8 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const auth = useAuthStore()
-//const API_URL = 'http://localhost:3000/api/auth/google-auth'
-const API_URL = 'https://practica-de-auteticacion.vercel.app/api/auth/google-auth'
+const API_URL = 'http://localhost:3000/api/auth/google-auth'
+//const API_URL = 'https://practica-de-auteticacion.vercel.app/api/auth/google-auth'
 
 //Manejar respuesta de Google
 const handleGoogleLogin = async (response) => {
@@ -21,19 +21,21 @@ const handleGoogleLogin = async (response) => {
     const googleToken = response.credential
 
     if (!googleToken) {
-      console.error("No se recibió token de Google")
+      console.error('No se recibió token de Google')
       return
     }
 
     const res = await axios.post(API_URL, { googleToken }, { withCredentials: true })
-    
+
     const { user, token } = res.data
+
+
 
     auth.login(user, token)
 
     router.push('/dashboard')
   } catch (error) {
-    console.error("Error en autenticación con Google:", error)
+    console.error('Error en autenticación con Google:', error)
     alert(error.response?.data?.message || 'Error al iniciar sesión con Google')
   }
 }
