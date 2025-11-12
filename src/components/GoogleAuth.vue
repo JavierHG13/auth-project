@@ -12,7 +12,8 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const auth = useAuthStore()
-const API_URL = 'http://localhost:3000/api/auth/google-auth'
+//const API_URL = 'http://localhost:3000/api/auth/google-auth'
+const API_URL = 'https://practica-de-auteticacion.vercel.app/api/auth/google-auth'
 
 //Manejar respuesta de Google
 const handleGoogleLogin = async (response) => {
