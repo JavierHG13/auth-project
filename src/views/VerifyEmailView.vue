@@ -66,7 +66,7 @@ const verifyCode = async () => {
   try {
     const response = await axios.post(`${API_URL}/verify-email`, {
       email: pendingEmail.value,
-      code: verificationCode.value,
+      code: code.value,
     })
     message.value = response.data.message
     messageType.value = 'success'
@@ -91,7 +91,7 @@ const resendCode = async () => {
   message.value = ''
 
   try {
-    const response = await axios.post(`${API_URL}/resend-code`, { email: pendingEmail.value, })
+    const response = await axios.post(`${API_URL}/resend-code`, { email: pendingEmail.value })
 
     message.value = response.data.message
     messageType.value = 'success'
